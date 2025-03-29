@@ -10,9 +10,9 @@ This project introduces a cryptographic framework for creating **Crypto Cash** u
 - The key is deleted and embedded inside a proof.
 - Anyone can verify the result using **F_key**, with no secrets shared.
 
-A new kind of money: 
-💡 **A token you can hold** 
-🕳️ **A secret no one knows** 
+A new kind of money: \
+💡 **A token you can hold** \
+🕳️ **A secret no one knows** \
 ✅ **A proof anyone can verify**
 
 ### 🔐 The Challenge
