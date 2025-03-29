@@ -226,7 +226,7 @@ If circom installation failed read:
     ```
     
     Generating a bunch of files inside `build` subdirectory:
-    
+    ```
     ├── build/                       # Directory for all generated artifacts
     │   ├── F_key.r1cs               # Compiled circuit constraints (R1CS format)
     │   ├── F_key.sym                # Symbol file mapping signals to wires (debugging)
@@ -234,7 +234,7 @@ If circom installation failed read:
     │   │   ├── F_key.wasm           # Compiled circuit (WebAssembly) for witness generation
     │   │   ├── generate_witness.js  # Node.js script to calculate the witness via WASM
     │   │   └── witness_calculator.js # Circom helper script for WASM witness calculation
-
+    ```
 3.  **Generate Witness & Verify Output:**
 
     ```bash
