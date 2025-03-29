@@ -1,6 +1,6 @@
 # 💸 Crypto Cash with NTAG 424 DNA and Zero-Knowledge AES Signature Verification
 
-This project introduces a cryptographic framework for creating **Crypto Cash** using the [NTAG 424 DNA](https://www.nxp.com/products/rfid-nfc/nfc-hf/ntag-for-tags-labels-cards/ntag-424-dna-ntag-424-dna-tam:NTAG424-DNA) NFC chip and **Zero-Knowledge Proofs (ZKPs)** implemented through **Circom**.
+This project introduces a cryptographic framework for creating **Crypto Cash** using the [NTAG 424 DNA]([https://www.nxp.com/products/rfid-nfc/nfc-hf/ntag-for-tags-labels-cards/ntag-424-dna-ntag-424-dna-tam:NTAG424-DNA](https://www.nxp.com/products/rfid-nfc/nfc-hf/ntag-for-tags-and-labels/ntag-424-dna-424-dna-tagtamper-advanced-security-and-privacy-for-trusted-iot-applications:NTAG424DNA)) NFC chip and **Zero-Knowledge Proofs (ZKPs)** implemented through **Circom**.
 
 ### 🧾 Summary
 
