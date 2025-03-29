@@ -143,10 +143,8 @@ Verification is:
 ## 📦 Requirements
 
 *   **Node.js (v16+):** [Download](https://nodejs.org/)
-*   **snarkjs:** `sudo npm install -g snarkjs`
 *   **Python 3:** Usually pre-installed.
 *   **pycryptodome:** `pip3 install pycryptodome`
-*   **Circom 2:** [Installation Guide](https://docs.circom.io/getting-started/installation/)
 ---
 
 ## 📥 Clone Dependencies
@@ -172,43 +170,90 @@ git clone https://github.com/iden3/circomlib.git external/circomlib
 
 ```
 
+**snarkjs:** `sudo npm install -g snarkjs`
+
+If circom installation failed read: 
+**Circom 2:** [Installation Guide](https://docs.circom.io/getting-started/installation/)
+
+
 ## 🚀 Usage
 
-1.  **Generate Verifier Circuit (`F_key.circom`):**
-    This script reads the AES key (defined inside `generate_aes_verifier.py`) and generates the `F_key.circom` file with the key hardcoded. *In a real system, each NTAG 424 chip would have its own unique key, leading to a unique `F_key.circom` and compiled circuit for each chip.*
+1.  **Generate Key and Test Input:**
+
+    This script is simulating the output of the NTAG 424 chip, and an attack.
+    
     ```bash
-    python3 generate_aes_verifier.py
+    python generate_aes_key.py
+    ```
+    
+    This script creates random AES key and saves it to 
+    
+    ```
+    build/keys/key.json
+    ```
+    
+    Using the key it generates a valid and invalid `(data, mac)` pair jsons, for testing. 
+    
+    ```
+    build/input/input_valid.json
+    build/input/input_invalid.json
+    ```
+    
+2.  **Compile the Circuit:**
+
+    ```bash
+    python compile_aes.py
     ```
 
-2.  **Generate Test Input (`input_valid.json`):**
-    This script uses the same AES key to encrypt sample data, creating a valid `(data, mac)` pair for testing, simulating the output of the NTAG 424 chip.
-    ```bash
-    python3 generate_valid_input.py
+    This script reads the AES key located in `build/keys/key.json` and generates the 
+    
     ```
-
-3.  **Compile the Circuit:**
-    Compile `F_key.circom` into R1CS, WASM (for witness generation), and SYM formats. Ensure you link the required libraries using the `-l` flag.
+    F_key.circom
+    ``` 
+    
+    It's a circom code with the key hardcoded. *In a real system, the same key will also be uploaded into NTAG 424 DNA chip.* 
+    
+    Then using `circom compiler` the script compiles `F_key.circom` into R1CS, WASM (for witness generation), and SYM formats. Calling from inside python the command:
+    
     ```bash
     circom F_key.circom --r1cs --wasm --sym -o build/ -l aes-circom/circuits -l external
     ```
+    
+    Generating a bunch of files inside `build` subdirectory:
+    
+    ├── build/                       # Directory for all generated artifacts
+    │   ├── F_key.r1cs               # Compiled circuit constraints (R1CS format)
+    │   ├── F_key.sym                # Symbol file mapping signals to wires (debugging)
+    │   ├── F_key_js/                # JavaScript/WASM-specific build outputs
+    │   │   ├── F_key.wasm           # Compiled circuit (WebAssembly) for witness generation
+    │   │   ├── generate_witness.js  # Node.js script to calculate the witness via WASM
+    │   │   └── witness_calculator.js # Circom helper script for WASM witness calculation
 
-4.  **Generate Witness & Verify Output:**
-    Use the compiled WASM circuit to compute the witness for the generated input file. This simulates the public verification process. The witness proves whether the constraints (i.e., `mac == AES(key, data)`) are satisfied.
+3.  **Generate Witness & Verify Output:**
+
     ```bash
-    # Generate the witness for the valid input
-    node build/F_key_js/generate_witness.js build/F_key_js/F_key.wasm input_valid.json build/witness.wtns
-
-    # Optional: Export witness to JSON for inspection
-    npx snarkjs wtns export json build/witness.wtns build/witness.json
-
-    # Check the 'isValid' output signal in the JSON witness
-    # The output array usually starts with '1', followed by public outputs.
-    # If 'isValid' is the only output, it should be the second element (index 1).
-    echo "Checking isValid output (expecting 1 for valid input):"
-    jq '.[1]' build/witness.json
+    python3 verifier_aes.py
     ```
-    *(Modify step 4 to use `input_invalid.json` to test failure cases where the output should be `0`)*
 
+    Use the compiled WASM circuit inside `build/F_key_js/F_key.wasm` to compute the witness for the input json files.
+    
+    This simulates the public verification process. The witness proves whether the constraints (i.e., `mac == AES(key, data)`) are satisfied.
+    
+    The code runs `node generate_witness.js` with passing it `F_key.wasm ` and `input.json` with `(data, mac)` pair.
+    
+    ```bash
+    node build/F_key_js/generate_witness.js build/F_key_js/F_key.wasm input_valid.json build/witness.wtns
+    ```
+
+    Then converts the witness into readable JSON format for inspection, executing:
+    
+    ```bash
+    npx snarkjs wtns export json build/witness.wtns build/witness.json
+    ```
+
+    - Check the 'isValid' output signal in the JSON witness.
+    - Reports result for both `input_valid.json`, `input_invalid.json`
+ 
 ## 🔐 Security Notes
 
 -   **Hardcoded Key:** The AES key installation into NTAG 424 DNA chip is not implemented yet. 
