@@ -153,11 +153,16 @@ Verification is:
 *   **pycryptodome:** `pip3 install pycryptodome`
 ---
 
-## 📥 Clone Dependencies
+## 📥 Clone Project & Dependencies
 
 Run these commands in your project's root directory:
 
 ```bash
+#Run in a designated folder
+
+# Clone this repo
+git clone https://github.com/simsim314/CryptoCash.git
+cd CryptoCash
 
 # Clone the circom repo
 git clone https://github.com/iden3/circom.git
@@ -172,8 +177,9 @@ git clone https://github.com/crema-labs/aes-circom.git
 
 # Required Circom standard library (for IsEqual, etc.)
 mkdir -p external
+cd external
 git clone https://github.com/iden3/circomlib.git external/circomlib
-
+cd .. 
 ```
 
 **snarkjs:** `sudo npm install -g snarkjs`
